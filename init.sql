@@ -1,6 +1,6 @@
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
-CREATE TABLE IF NOT EXISTS numbers (
+CREATE TABLE IF NOT EXISTS calls (
     id serial PRIMARY KEY,
     number BIGINT,
     timestamp BIGINT
