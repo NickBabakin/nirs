@@ -34,55 +34,33 @@ def get_response_time(result):
     return parse_ms(second_to_last) + parse_ms(last)
 
 
-def explain_insert(username: str):
-    password = f"passw{username}"
+def explain_insert(phone_number: str):
+    call_text = f"text that happened during call {phone_number}"
     query = (
         f"EXPLAIN (ANALYZE, COSTS OFF, TIMING OFF)"
-        f"INSERT INTO users (username, password) "
-        f"VALUES ('{username}', '{password}')"
+        f"INSERT INTO calls (phone_number, call_text) "
+        f"VALUES ('{phone_number}', '{call_text}')"
     )
     with db.engine.begin() as conn:
         result = conn.execute(text(query))
         return get_response_time(result)
 
 
-def explain_e_insert(username: str):
-    password = f"passw{username}"
+def explain_e_insert(phone_number: str):
+    call_text = f"text that happened during call {phone_number}"
     query = (
         f"EXPLAIN (ANALYZE, COSTS OFF, TIMING OFF)"
-        f"INSERT INTO users (username, password) "
-        f"VALUES ('{username}', pgp_sym_encrypt('{password}', '{key}', 'compress-algo=1, cipher-algo=aes256'))"
+        f"INSERT INTO calls (phone_number, call_text) "
+        f"VALUES ('{phone_number}', pgp_sym_encrypt('{call_text}', '{key}', 'compress-algo=1, cipher-algo=aes256'))"
     )
     with db.engine.begin() as conn:
         result = conn.execute(text(query))
         return get_response_time(result)
 
 
-def explain_e_select():
+def delete_from_calls():
     query = (
-        f"EXPLAIN (ANALYZE, COSTS OFF, TIMING OFF)"
-        f"SELECT username, pgp_sym_decrypt(password::bytea, '{key}') as password "
-        f"FROM users where username = 'oleg_e';"
-    )
-    with db.engine.begin() as conn:
-        result = conn.execute(text(query))
-        return get_response_time(result)
-
-
-def e_select():
-    query = (
-        f"SELECT username, pgp_sym_decrypt(password::bytea, '{key}') as password "
-        f"FROM users where username = 'oleg_e';"
-    )
-    with db.engine.begin() as conn:
-        result = conn.execute(text(query))
-        for row in result:
-            print(row)
-
-
-def delete_from_users():
-    query = (
-        f"DELETE FROM users; "
+        f"DELETE FROM calls; "
     )
     with db.engine.begin() as conn:
         conn.execute(text(query))
@@ -92,7 +70,7 @@ def delete_from_users():
 if __name__ == '__main__':
     fun_name = sys.argv[1]
     fun = None
-    delete_from_users()
+    delete_from_calls()
     ids = range(10000)
     if fun_name == "ins":
         fun = explain_insert

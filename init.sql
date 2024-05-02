@@ -1,13 +1,7 @@
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
 CREATE TABLE IF NOT EXISTS calls (
-    id serial PRIMARY KEY,
-    number BIGINT,
-    timestamp BIGINT
-);
-
-CREATE TABLE IF NOT EXISTS users (
-    user_id serial PRIMARY KEY,
-    username VARCHAR(50),
-    password TEXT
+    call_id serial PRIMARY KEY,
+    phone_number VARCHAR(50),
+    call_text TEXT
 );
